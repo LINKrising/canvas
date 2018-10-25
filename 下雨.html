@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>canvas</title>
+    <style>
+        *{padding: 0;margin: 0;}
+        #canvas{position: absolute;top: 0;left: 0;bottom: 0;background: black;}
+    </style>
+</head>
+<body>
+    <canvas id="canvas">
+        <span>你的浏览器不支持canvas</span>
+    </canvas>
+    <script>
+        //初始化画布高宽
+        let clientW = document.documentElement.clientWidth
+        let clientH = document.documentElement.clientHeight
+        let canvas = document.getElementById('canvas')
+        canvas.width = clientW
+        canvas.height = clientH
+        let ctx = null
+        if (canvas.getContext) {
+            ctx = canvas.getContext('2d')
+            console.log('支持')
+        }else{
+            console.log('不支持')
+        }
+        
+        //视口变化时改变画布高宽
+        window.onresize = function(){
+            clientW = document.documentElement.clientWidth
+            clientH = document.documentElement.clientHeight
+            canvas.width = clientW
+            canvas.heigth = clientH
+        }
+        //封装区间内随机数函数  [max,min]
+        const random = (max,min)=>{
+            return Math.random()*(max-min)+min
+        }
+        console.log(random(5,10))
+
+        //创建Drop类
+        class Drop{
+            // 初始化函数
+            init(){
+                //产生起点X坐标
+                this.x = random(0,clientW)
+                //产生起点Y坐标
+                this.y = 0
+                //下路速度V
+                this.v = random(5,6)
+                //地板高度
+                this.endY = random(clientH*0.7,clientH*0.8)
+                //低落地板后圆r
+                this.r = 1
+                //rgba a透明度
+                this.a = 1
+                //圆变大间隔
+                this.vr = 2
+            }
+            draw(){
+                //画矩形
+                console.log(this.endY)
+                if(this.y<this.endY){
+                    ctx.save()
+                    ctx.fillStyle='white'
+                    ctx.beginPath()
+                    ctx.rect(this.x, this.y, 2, 20)
+                    ctx.fill()
+                    ctx.restore()   
+                }else{//画矩形
+                    ctx.save()
+                    ctx.strokeStyle=`rgba(255,255,255,${this.a})`
+                    ctx.beginPath()
+                    ctx.arc(this.x, this.y, this.r,0, Math.PI * 2, true);
+                    ctx.stroke()
+                    ctx.restore()
+                    
+                }  
+                this.move()                
+            }
+            //移动
+            move(){
+                if(this.y<this.endY){
+                    this.y+=this.v
+                }else{
+                    if(this.a>0.02){
+                        this.r+=1
+                        if(this.r>40){
+                            this.a*=0.9
+                        }
+                    }else{
+                        this.init()
+                    }               
+
+                }
+           
+                
+            }
+
+        }
+        //容器
+        let dropContainer = []
+        //数量
+        let num = 20
+        //产生多少个drop
+        prodDrop(num)
+        function prodDrop(num){
+            for (let i = 0; i < num; i++) {
+                setTimeout(()=>{
+                    var drop = new Drop()
+                    drop.init()
+                    dropContainer.push(drop)
+                },400*i)            
+            }
+        }
+
+
+        dropMove()
+        function dropMove(){
+            ctx.fillStyle = 'rgba(0,0,0,0.1)'
+            ctx.fillRect(0,0,clientW,clientH)            
+            for (let i = 0; i < dropContainer.length; i++) {
+                dropContainer[i].draw()                
+            }
+            requestAnimationFrame(dropMove)
+        }
+
+        // 不使用requestAnimationFrame，就用定时器控制重绘
+        // let dropMoveInterval = setInterval(()=>{
+        //     ctx.fillStyle = 'rgba(0,0,0,0.1)'
+        //     ctx.fillRect(0,0,clientW,clientH)            
+        //     for (let i = 0; i < dropContainer.length; i++) {
+        //         dropContainer[i].draw()                
+        //     } 
+        // },30)
+        // //清除定时器
+        // if(window.closed){
+        //     clearInterval(dropMoveInterval)
+        // }
+
+
+
+    </script>
+</body>
+</html>

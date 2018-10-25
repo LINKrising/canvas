@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>canvas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: pink;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: rebeccapurple;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        建议成对出现标签
+        canvas默认具有高宽300*150
+        1.检查是否有画笔canvas.getContext
+
+    -->
+    <canvas id="canvas" width="350" height="350">你的浏览器不支持canvas</canvas>
+    <script type="text/javascript">
+        window.onload = function () {
+            var canvas = document.querySelector('#canvas')
+            var context = canvas.getContext('2d')
+            setInterval(function () {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                move()
+
+
+            }, 1000)
+
+            function move() {
+                var x = 30,
+                    y = 0
+                var show_day = new Array('星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六')
+                var date = new Date()
+                var s = date.getSeconds()
+                var m = date.getMinutes() + s / 60
+                var h = date.getHours() + m / 60
+                var M = date.getMonth() + 1
+                var w = date.getDay()
+                var Y = date.getFullYear()
+                var D = date.getDate()
+                h = h > 12 ? h - 12 : h
+                M = M < 10 ? "0" + M : M
+                s = s < 10 ? "0" + s : s
+                console.log(Y, M, D, h, m, s, show_day[w])
+
+                //表盘
+
+                if (canvas.getContext) {
+
+                    context.save();
+                    context.translate(175, 175);
+                    context.strokeStyle = 'red';
+                    context.lineWidth = 5;
+                    context.lineCap = 'round';
+                    context.rotate(Math.PI / 180 * -90);
+
+                    context.beginPath();
+
+
+                    context.save();
+                    context.strokeStyle = 'red';
+                    context.lineWidth = 5;
+
+                    context.beginPath();
+                    context.arc(0, 0, 100, 0, 360 * Math.PI / 180);
+                    context.stroke();
+                    context.restore();
+
+
+
+
+                    //时针刻度
+                    context.save();
+                    for (var i = 0; i <= 12; i++) {
+                        context.rotate(Math.PI / 180 * 30);
+                        context.beginPath();
+                        context.moveTo(85, 0);
+                        context.lineTo(93, 0);
+                        context.stroke();
+
+
+                    }
+                    context.restore();
+
+                    //分针刻度
+                    context.save();
+                    context.lineWidth = 3;
+                    for (var i = 0; i <= 60; i++) {
+                        if (i % 5 != 0) {
+                            context.beginPath();
+                            context.moveTo(90, 0);
+                            context.lineTo(93, 0);
+                            context.stroke();
+                        }
+                        context.rotate(Math.PI / 180 * 6);
+                    }
+                    context.restore();
+
+
+                    //时针
+                    context.save();
+                    context.lineWidth = 8;
+                    context.strokeStyle = 'black';
+                    context.rotate(Math.PI / 180 * 30 * h);
+                    context.beginPath();
+                    context.moveTo(0, 0);
+                    context.lineTo(60, 0);
+                    context.stroke();
+                    context.restore();
+
+                    //分针
+
+                    context.save();
+                    context.lineWidth = 6;
+                    context.strokeStyle = 'green';
+                    context.rotate(Math.PI / 180 * m * 6);
+                    context.beginPath();
+                    context.moveTo(0, 0);
+                    context.lineTo(70, 0);
+                    context.stroke();
+                    context.restore();
+
+
+                    //秒针
+
+                    context.save();
+                    context.lineWidth = 4;
+                    context.strokeStyle = 'blue';
+                    context.rotate(Math.PI / 180 * s * 6);
+                    context.beginPath();
+                    context.moveTo(0, 0);
+                    context.lineTo(90, 0);
+                    context.stroke();
+                    context.restore();
+                    context.restore();
+
+
+
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        }
+    </script>
+</body>
+
+</html>

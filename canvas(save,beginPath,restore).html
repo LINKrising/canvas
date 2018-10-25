@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>canvas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            background: pink;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: rebeccapurple;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        建议成对出现标签
+        canvas默认具有高宽300*150
+        1.检查是否有画笔canvas.getContext
+
+    -->
+    <canvas id="canvas" width="350" height="350">你的浏览器不支持canvas</canvas>
+    <script type="text/javascript">
+        window.onload = function () {
+            const canvas = document.querySelector('#canvas')
+            if (canvas.getContext) {
+                const context = canvas.getContext('2d')
+                context.save();
+                context.strokeStyle = 'red';
+                context.lineWidth = 10;
+                context.translate(100, 20);
+
+                context.save();
+                context.strokeStyle = 'pink';
+                context.lineWidth = 6;
+                context.rotate(Math.PI / 180 * 10);
+                context.beginPath();
+                context.moveTo(20, 30);
+                context.lineTo(300, 100);
+                context.stroke();
+                context.restore();
+                context.strokeStyle = 'red';
+                context.lineWidth = 8;
+                context.translate(100, 20);
+
+                context.rotate(Math.PI / 180 * 10);
+                context.beginPath();
+                context.moveTo(20, 30);
+                context.lineTo(300, 100);
+                context.stroke();
+
+
+
+
+
+            }
+
+        }
+    </script>
+</body>
+
+</html>

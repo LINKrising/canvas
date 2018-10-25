@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>guaguaka</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #wrap {
+            height: 100%;
+            width: 100%;
+        }
+
+        #wrap>ul,
+        #wrap>ul>li {
+            height: 100%;
+            width: 100%;
+            background: url(img/01.jpg);
+            background-size: 100% 100%;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: all 1s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wrap">
+        <canvas id="canvas"></canvas>
+        <ul>
+            <li></li>
+        </ul>
+    </div>
+    <script>
+        window.onload = function () {
+            document.addEventListener('touchstart', function (ev) {
+                ev = ev || event
+                ev.preventDefault()
+            })
+            const w = document.documentElement.clientWidth
+            const h = document.documentElement.clientHeight
+            var canvas = document.querySelector('#canvas')
+            canvas.width = w
+            canvas.height = h
+            if (canvas.getContext) {
+                context = canvas.getContext('2d')
+                const img = new Image()
+                img.src = 'img/bg.jpg'
+                console.log(context.getImageData(0, 0, w, h));
+                img.onload = function () {
+                    draw()
+                }
+                function draw() {
+                    var flag = 0
+                    context.lineWidth = 50;
+                    context.lineCap = 'round';
+                    context.lineJoin = 'round';
+                    context.drawImage(img, 0, 0, w, h);
+                    canvas.addEventListener('touchstart', function (ev) {
+                        ev = ev || event
+                        var touch = ev.changedTouches[0]
+                        var x = touch.clientX - canvas.offsetLeft
+                        var y = touch.clientY - canvas.offsetTop
+                        context.save();
+                        context.globalCompositeOperation = 'destination-out';
+                        context.beginPath();
+                        context.moveTo(x, y);
+                        context.lineTo(x + 1, y + 1);
+                        context.stroke();
+                        context.restore();
+                    })
+                    canvas.addEventListener('touchmove', function (ev) {
+                        ev = ev || event
+                        var touch = ev.changedTouches[0]
+                        var x = touch.clientX - canvas.offsetLeft
+                        var y = touch.clientY - canvas.offsetTop
+                        context.save();
+                        context.globalCompositeOperation = 'destination-out';
+                        context.lineTo(x, y);
+                        context.stroke();
+                        context.restore();
+                    })
+                    canvas.addEventListener('touchend', function (ev) {
+                        ev = ev || event
+                        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                        var allPiont = imgData.width * imgData.height
+                        console.log(imgData.data);
+                        
+                        console.log(allPiont);
+                        for (var i = 0; i < allPiont; i++) {
+                            //data列表的数据是每一个像素点的RGBA数据 第一个像素（0,0）信息 0 1 2 3   =》（x,y）= (w*x+y)*4  (w*x+y)*4+1  (w*x+y)*4+2 (w*x+y)*4+3
+                            if (imgData.data[i * 4 + 3] === 0) { 
+                                flag++
+                            }
+                            if (flag >= allPiont / 2) {
+                                canvas.style.opacity = 0
+                            }
+
+                        }
+
+                    })
+                    canvas.addEventListener('transitionend', function () {
+                        this.remove();
+                    })
+                }
+
+            }
+        }
+
+    </script>
+</body>
+
+</html>

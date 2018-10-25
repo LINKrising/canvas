@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>msk</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #canvas {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate3d(-50%, -50%, 0);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="canvas">你的浏览器不支持</canvas>
+    <script>
+        function getPxinfo(imgdata, x, y) {
+            var color = []
+            var data = imgdata.data
+            var w = imgdata.width
+            var h = imgdata.height
+            // RGBA
+            color[0] = data[(y * w + x) * 4]
+            color[1] = data[(y * w + x) * 4 + 1]
+            color[2] = data[(y * w + x) * 4 + 2]
+            color[3] = data[(y * w + x) * 4 + 3]
+            return color;
+
+
+        }
+        function setPxinfo(imgdata, x, y, color) {
+            var data = imgdata.data
+            var w = imgdata.width
+            var h = imgdata.height
+            data[(y * w + x) * 4] = color[0]
+            data[(y * w + x) * 4 + 1] = color[1]
+            data[(y * w + x) * 4 + 2] = color[2]
+            data[(y * w + x) * 4 + 3] = color[3]
+        }
+        const canvas = document.querySelector('#canvas')
+        if (canvas.getContext) {
+            var context = canvas.getContext('2d')
+            var img = new Image()
+            img.src = 'img/02.jpg'
+            img.onload = function () {
+                canvas.width = img.width * 2
+                canvas.height = img.height
+                draw()
+            }
+            function draw() {
+                context.drawImage(img,0,0);
+                
+                var oldImg = context.getImageData(0, 0, img.width, img.height)
+                var newImg = context.createImageData(img.width, img.height)
+                var size = 4
+                // (oldImg.width / size, oldImg.height / size)马赛克方块坐标
+                //(0,0) ====(0,0)(5,5) 
+                //(0,1)===(0,4)(3,8)
+                for (let i = 0; i < oldImg.width / size; i++) {
+                    for (let j = 0; j < oldImg.height / size; j++) {
+                        var x = Math.floor(Math.random()*size*i)
+                        var y= Math.floor(Math.random() * size * j)
+                        var color = getPxinfo(oldImg,x,y)
+                        for (let a = 0; a < size; a++) {
+                            for (let b = 0; b <size; b++) {
+                                setPxinfo(newImg,i*size+a, j * size + b,color)                               
+                            }
+                            
+                        }
+
+
+                    }
+                }
+                context.putImageData(newImg,img.width,0);
+
+            }
+        }
+
+    </script>
+</body>
+
+</html>

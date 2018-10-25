@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>tem</title>
+</head>
+<script type="text/template" id="container">
+    <p>My name is {{name}}</p>
+    <p>{{msg}}</p>
+</script>
+<body>
+    <script>
+        window.onload = function(){
+            const htmlTemplate  = document.querySelector('#container').innerHTML
+            const regx = /\{\{(\w+)\}\}/g
+            const data = {
+                name:'leo',
+                msg:'hello',
+            }
+            console.log(htmlTemplate)
+            var html = htmlTemplate.replace(regx,function($1,$2){
+                return data[$2]
+            })
+            console.log(html)
+            document.body.innerHTML = html
+
+        }
+    </script>
+</body>
+</html>
